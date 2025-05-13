@@ -41,11 +41,15 @@ public partial class MainWindow : Window
     {
         gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
 
-        var winner = GetWinner();
-        if (winner.HasValue)
+        var (symbol, winLine) = GetWinner();
+        if (symbol.HasValue)
         {
             IsGameActive = false;
-            foreach (var item in GameCells) item.ClickCommand.RaiseCanExecuteChanged();
+            foreach (var item in GameCells)
+            {
+                item.ClickCommand.RaiseCanExecuteChanged();
+                item.IsWinningCell = winLine.Contains(item.Number);
+            }
             GameMessageTxt.Text = $"{Players[CurrPlayerIdx].Name} Win";
             return;
         }
@@ -54,18 +58,18 @@ public partial class MainWindow : Window
         PrintCurrentPlayerTurn();
     }
 
-    private SymbolTypeEnum? GetWinner()
+    private (SymbolTypeEnum? symbol, List<int> line) GetWinner()
     {
         var xList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.X).Select(c => c.Number).ToHashSet();
         var oList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.O).Select(c => c.Number).ToHashSet();
 
         foreach (var winLine in _winLines)
         {
-            if (winLine.All(xList.Contains)) return SymbolTypeEnum.X;
-            if (winLine.All(oList.Contains)) return SymbolTypeEnum.O;
+            if (winLine.All(xList.Contains)) return (SymbolTypeEnum.X, winLine);
+            if (winLine.All(oList.Contains)) return (SymbolTypeEnum.O, winLine);
         }
 
-        return null;
+        return (null, []);
     }
 
     private void PrintCurrentPlayerTurn()
