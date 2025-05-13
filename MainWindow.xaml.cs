@@ -7,8 +7,13 @@ using TicTacToe.Helpers;
 namespace TicTacToe;
 public partial class MainWindow : Window
 {
-    public ObservableCollection<GameCell> GameCells { get; set; } = new ObservableCollection<GameCell>();
-    public SymbolTypeEnum currTurnSymbol = SymbolTypeEnum.X;
+    public ObservableCollection<GameCell> GameCells { get; set; } = [];
+    public List<Player> Players { get; set; } =
+    [
+        new() { Name = "Player 1", Symbol = SymbolTypeEnum.X},
+        new() { Name = "Player 2", Symbol = SymbolTypeEnum.O},
+    ];
+    private int CurrPlayerIdx { get; set; } = 0;
     private readonly List<List<int>> _winLines =
     [
         [1,2,3],[4,5,6],[7,8,9],
@@ -20,27 +25,32 @@ public partial class MainWindow : Window
         InitializeComponent();
         foreach (var idx in Enumerable.Range(1, 9))
         {
-            var gameCell = new GameCell { Number = idx, Symbol = Enums.SymbolTypeEnum.NotFilled };
+            var gameCell = new GameCell { Number = idx, Symbol = null };
             gameCell.ClickCommand = new RelayCommand(() => OnGameCellClicked(gameCell));
             GameCells.Add(gameCell);
         }
+        PrintCurrentPlayerTurn();
         DataContext = this;
     }
 
     public void OnGameCellClicked(GameCell gameCell)
     {
-        if (gameCell.Symbol == currTurnSymbol) return;
+        if (gameCell.Symbol == Players[CurrPlayerIdx].Symbol) return;
 
-        gameCell.Symbol = currTurnSymbol;
-        currTurnSymbol = currTurnSymbol.GetNextTurn();
+        gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
 
-        var winner = CheckWinner();
-        if (winner == SymbolTypeEnum.NotFilled) return;
+        var winner = GetWinner();
+        if (!winner.HasValue)
+        {
+            SwitchPlayer();
+            PrintCurrentPlayerTurn();
+            return;
+        }
 
-        WinnerTxt.Text = $"{winner.GetAsString()} Win";
+        GameMessageTxt.Text = $"{Players[CurrPlayerIdx].Name} Win";
     }
 
-    private SymbolTypeEnum CheckWinner()
+    private SymbolTypeEnum? GetWinner()
     {
         var xList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.X).Select(c => c.Number).ToHashSet();
         var oList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.O).Select(c => c.Number).ToHashSet();
@@ -51,6 +61,17 @@ public partial class MainWindow : Window
             if (winLine.All(oList.Contains)) return SymbolTypeEnum.O;
         }
 
-        return SymbolTypeEnum.NotFilled;
+        return null;
+    }
+
+    private void PrintCurrentPlayerTurn()
+    {
+        var currPlayer = Players[CurrPlayerIdx];
+        GameMessageTxt.Text = $"{currPlayer.Name} turn({currPlayer.Symbol.GetAsString()})";
+    }
+
+    private void SwitchPlayer()
+    {
+        CurrPlayerIdx = CurrPlayerIdx == 0 ? 1 : 0;
     }
 }
