@@ -4,7 +4,6 @@
     {
         X,
         O,
-        NotFilled,
     }
 
     public static class SymbolTypeEnumExtensions
@@ -13,7 +12,6 @@
         {
             SymbolTypeEnum.X => "X",
             SymbolTypeEnum.O => "O",
-            SymbolTypeEnum.NotFilled => string.Empty,
             _ => throw new NotImplementedException()
         };
 

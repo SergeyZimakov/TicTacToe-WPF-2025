@@ -43,7 +43,7 @@
         </Grid.RowDefinitions>
         
         <TextBox Grid.Row="0" 
-         x:Name="WinnerTxt" 
+         x:Name="GameMessageTxt" 
          IsReadOnly="True" 
          Text=""
          FontSize="16"

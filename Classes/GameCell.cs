@@ -8,7 +8,7 @@ namespace TicTacToe.Classes
     {
         
         public int Number { get; set; }
-        public SymbolTypeEnum Symbol
+        public SymbolTypeEnum? Symbol
         {
             get => _symbol;
             set
@@ -19,7 +19,7 @@ namespace TicTacToe.Classes
             }
         }
         
-        private SymbolTypeEnum _symbol;
+        private SymbolTypeEnum? _symbol;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
