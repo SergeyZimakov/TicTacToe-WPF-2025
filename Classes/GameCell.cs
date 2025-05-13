@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using TicTacToe.Enums;
+using TicTacToe.Helpers;
 
 namespace TicTacToe.Classes
 {
@@ -24,6 +25,6 @@ namespace TicTacToe.Classes
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        public ICommand ClickCommand { get; set; } = null!; 
+        public RelayCommand ClickCommand { get; set; } = null!; 
     }
 }
