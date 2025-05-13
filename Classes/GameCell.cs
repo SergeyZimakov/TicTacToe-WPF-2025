@@ -19,8 +19,20 @@ namespace TicTacToe.Classes
                 OnPropertyChanged(nameof(Symbol));
             }
         }
-        
+
+        public bool IsWinningCell
+        {
+            get => _isWinningCell;
+            set
+            {
+                if (_isWinningCell == value) return;
+                _isWinningCell = value;
+                OnPropertyChanged(nameof(IsWinningCell));
+            }
+        }
+
         private SymbolTypeEnum? _symbol;
+        private bool _isWinningCell;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>

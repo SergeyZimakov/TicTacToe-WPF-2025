@@ -33,6 +33,9 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#FFE0E0E0" />
                 </Trigger>
+                <DataTrigger Binding="{Binding IsWinningCell}" Value="True">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
