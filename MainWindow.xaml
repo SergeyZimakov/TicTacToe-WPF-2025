@@ -1,0 +1,75 @@
+﻿<Window x:Class="TicTacToe.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TicTacToe"
+        xmlns:converters="clr-namespace:TicTacToe.Converters" xmlns:classes="clr-namespace:TicTacToe.Classes" d:DataContext="{d:DesignInstance Type=classes:GameCell}"
+        mc:Ignorable="d"
+        Title="TicTacToe" Height="450" Width="800">
+    <Window.Resources>
+        <converters:SymbolToStringConverter x:Key="SymbolConverter" />
+        <converters:MultiplyConverter x:Key="MultiplyConverter" />
+        <Style x:Key="GameCellButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight, Converter={StaticResource MultiplyConverter}, ConverterParameter=0.5}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFE0E0E0" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <TextBox Grid.Row="0" 
+         x:Name="WinnerTxt" 
+         IsReadOnly="True" 
+         Text=""
+         FontSize="16"
+         Width="200" 
+         Height="100"
+         Margin="0,10,0,0"
+         TextAlignment="Center" />
+        
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding GameCells}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="3" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="ItemsControl.Margin" Value="0" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Symbol, Converter={StaticResource SymbolConverter}}" 
+                        Command="{Binding ClickCommand}"
+                        Style="{StaticResource GameCellButtonStyle}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
