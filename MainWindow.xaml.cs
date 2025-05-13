@@ -14,6 +14,7 @@ public partial class MainWindow : Window
         new() { Name = "Player 2", Symbol = SymbolTypeEnum.O},
     ];
     private int CurrPlayerIdx { get; set; } = 0;
+    private bool IsGameActive { get; set; } = true;
     private readonly List<List<int>> _winLines =
     [
         [1,2,3],[4,5,6],[7,8,9],
@@ -26,7 +27,10 @@ public partial class MainWindow : Window
         foreach (var idx in Enumerable.Range(1, 9))
         {
             var gameCell = new GameCell { Number = idx, Symbol = null };
-            gameCell.ClickCommand = new RelayCommand(() => OnGameCellClicked(gameCell));
+            gameCell.ClickCommand = new RelayCommand(
+                () => OnGameCellClicked(gameCell),
+                () => IsGameActive && !gameCell.Symbol.HasValue
+            );
             GameCells.Add(gameCell);
         }
         PrintCurrentPlayerTurn();
@@ -35,19 +39,19 @@ public partial class MainWindow : Window
 
     public void OnGameCellClicked(GameCell gameCell)
     {
-        if (gameCell.Symbol == Players[CurrPlayerIdx].Symbol) return;
-
         gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
 
         var winner = GetWinner();
-        if (!winner.HasValue)
+        if (winner.HasValue)
         {
-            SwitchPlayer();
-            PrintCurrentPlayerTurn();
+            IsGameActive = false;
+            foreach (var item in GameCells) item.ClickCommand.RaiseCanExecuteChanged();
+            GameMessageTxt.Text = $"{Players[CurrPlayerIdx].Name} Win";
             return;
         }
 
-        GameMessageTxt.Text = $"{Players[CurrPlayerIdx].Name} Win";
+        SwitchPlayer();
+        PrintCurrentPlayerTurn();
     }
 
     private SymbolTypeEnum? GetWinner()
