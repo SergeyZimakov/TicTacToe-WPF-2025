@@ -10,11 +10,7 @@ namespace TicTacToe.Pages
     public partial class GamePage : Page
     {
         public ObservableCollection<GameCell> GameCells { get; set; } = [];
-        public List<Player> Players { get; set; } =
-        [
-            new() { Name = "Player 1", Symbol = SymbolTypeEnum.X},
-            new() { Name = "Player 2", Symbol = SymbolTypeEnum.O},
-        ];
+        public List<Player> Players { get; set; } = [];
         private int CurrPlayerIdx { get; set; } = 0;
         private bool IsGameActive { get; set; } = true;
         private readonly List<List<int>> _winLines =
@@ -24,10 +20,13 @@ namespace TicTacToe.Pages
             [1,5,9],[3,5,7],
         ];
         private readonly Frame _frame;
-        public GamePage(Frame frame)
+        public GamePage(Frame frame, Player player1, Player player2)
         {
             InitializeComponent();
             _frame = frame;
+
+            Players.Add(player1);
+            Players.Add(player2);
 
             foreach (var idx in Enumerable.Range(1, 9))
             {
