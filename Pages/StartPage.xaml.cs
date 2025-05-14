@@ -6,7 +6,8 @@ namespace TicTacToe.Pages
     public partial class StartPage : Page
     {
         private readonly Frame _frame;
-        private string _selectedGameOption;
+        private string _selectedGameModeOption;
+        private string _selectedPlayAsOption;
         public StartPage(Frame frame)
         {
             InitializeComponent();
@@ -28,20 +29,45 @@ namespace TicTacToe.Pages
         private void HandleSelectedGameMode()
         {
             var selectedOption = (GameModeBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
-            _selectedGameOption = selectedOption ?? string.Empty;
-            switch (selectedOption)
+            _selectedGameModeOption = selectedOption ?? string.Empty;
+            switch (_selectedGameModeOption)
             {
                 case "PvP":
                     Player1NameTxt.Text = "";
                     Player2NameTxt.Text = "";
                     Player1NameTxt.IsEnabled = true;
                     Player2NameTxt.IsEnabled = true;
+                    PlayAsTxt.Visibility = System.Windows.Visibility.Hidden;
+                    PlayAsBox.Visibility = System.Windows.Visibility.Hidden;
                     break;
                 case "PvC":
+                    PlayAsTxt.Visibility = System.Windows.Visibility.Visible;
+                    PlayAsBox.Visibility = System.Windows.Visibility.Visible;
+                    PlayAsBox.SelectedIndex = 0;
+                    HandlePlayAsChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void HandlePlayAsChanged()
+        {
+            var selectedOption = (PlayAsBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
+            _selectedPlayAsOption = selectedOption ?? string.Empty;
+            switch (_selectedPlayAsOption)
+            {
+                case "1":
                     Player1NameTxt.Text = "";
                     Player2NameTxt.Text = "Computer";
                     Player1NameTxt.IsEnabled = true;
                     Player2NameTxt.IsEnabled = false;
+                    break;
+                case "2":
+                    Player1NameTxt.Text = "Computer";
+                    Player2NameTxt.Text = "";
+                    Player1NameTxt.IsEnabled = false;
+                    Player2NameTxt.IsEnabled = true;
                     break;
                 default:
                     break;
@@ -68,16 +94,21 @@ namespace TicTacToe.Pages
             {
                 Name = Player1NameTxt.Text,
                 Symbol = Enums.SymbolTypeEnum.X,
-                IsComputer = false
+                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption == "1"
             };
 
             var player2 = new Player
             {
                 Name = Player2NameTxt.Text,
                 Symbol = Enums.SymbolTypeEnum.O,
-                IsComputer = _selectedGameOption == "PvC"
+                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption == "2"
             };
             _frame.Navigate(new GamePage(_frame, player1, player2));
+        }
+
+        private void PlayAsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HandlePlayAsChanged();
         }
     }
 }

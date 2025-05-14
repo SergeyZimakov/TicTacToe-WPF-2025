@@ -10,9 +10,15 @@
 
     <StackPanel VerticalAlignment="Center">
         <TextBlock Text="Select Game Mode:" FontSize="16" />
-        <ComboBox x:Name="GameModeBox" Text="Please choose game mode" SelectionChanged="GameModeBox_SelectionChanged">
+        <ComboBox x:Name="GameModeBox" SelectionChanged="GameModeBox_SelectionChanged">
             <ComboBoxItem Content="1 x 1" Tag="PvP" />
             <ComboBoxItem Content="Against Computer" Tag="PvC" />
+        </ComboBox>
+
+        <TextBlock x:Name="PlayAsTxt" Text="Play As:" FontSize="16" Visibility="Hidden" />
+        <ComboBox x:Name="PlayAsBox" Visibility="Hidden" SelectionChanged="PlayAsBox_SelectionChanged">
+            <ComboBoxItem Content="Player 1" Tag="1" />
+            <ComboBoxItem Content="Player 2" Tag="2" />
         </ComboBox>
 
         <TextBlock Text="Player 1:" />
