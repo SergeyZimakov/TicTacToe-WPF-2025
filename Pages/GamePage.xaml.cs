@@ -26,8 +26,9 @@ namespace TicTacToe.Pages
         private readonly Frame _frame;
         public GamePage(Frame frame)
         {
-            _frame = frame;
             InitializeComponent();
+            _frame = frame;
+
             foreach (var idx in Enumerable.Range(1, 9))
             {
                 var gameCell = new GameCell { Number = idx, Symbol = null };
