@@ -37,8 +37,8 @@ namespace TicTacToe.Pages
                     Player2NameTxt.Text = "";
                     Player1NameTxt.IsEnabled = true;
                     Player2NameTxt.IsEnabled = true;
-                    PlayAsTxt.Visibility = System.Windows.Visibility.Hidden;
-                    PlayAsBox.Visibility = System.Windows.Visibility.Hidden;
+                    PlayAsTxt.Visibility = System.Windows.Visibility.Collapsed;
+                    PlayAsBox.Visibility = System.Windows.Visibility.Collapsed;
                     break;
                 case "PvC":
                     PlayAsTxt.Visibility = System.Windows.Visibility.Visible;
@@ -78,13 +78,13 @@ namespace TicTacToe.Pages
         {
             if (string.IsNullOrWhiteSpace(Player1NameTxt.Text))
             {
-                ErrorMessageTxt.Text = "Please enter the names of all player 1";
+                ErrorMessageTxt.Text = "Please enter the name of Player 1";
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(Player1NameTxt.Text))
+            if (string.IsNullOrWhiteSpace(Player2NameTxt.Text))
             {
-                ErrorMessageTxt.Text = "Please enter the names of all player 2";
+                ErrorMessageTxt.Text = "Please enter the name of Player 2";
                 return;
             }
 

@@ -28,17 +28,8 @@ namespace TicTacToe.Pages
 
             Players.Add(player1);
             Players.Add(player2);
+            StartNewGame();
 
-            foreach (var idx in Enumerable.Range(1, 9))
-            {
-                var gameCell = new GameCell { Number = idx, Symbol = null };
-                gameCell.ClickCommand = new RelayCommand(
-                    () => OnGameCellClicked(gameCell),
-                    () => IsGameActive && !gameCell.Symbol.HasValue
-                );
-                GameCells.Add(gameCell);
-            }
-            PrintCurrentPlayerTurn();
             DataContext = this;
         }
 
@@ -112,8 +103,36 @@ namespace TicTacToe.Pages
 
         private void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            foreach (var gameCell in GameCells) gameCell.Symbol = null;
+            StartNewGame();
+        }
+
+        private void StartNewGame()
+        {
+            IsGameActive = true;
             CurrPlayerIdx = 0;
+
+            if (!GameCells.Any())
+            {
+                foreach (var idx in Enumerable.Range(1, 9))
+                {
+                    var gameCell = new GameCell { Number = idx, Symbol = null };
+                    gameCell.ClickCommand = new RelayCommand(
+                        () => OnGameCellClicked(gameCell),
+                        () => IsGameActive && !gameCell.Symbol.HasValue
+                    );
+                    GameCells.Add(gameCell);
+                }
+            }
+            else
+            {
+                foreach (var gameCell in GameCells)
+                {
+                    gameCell.Symbol = null;
+                    gameCell.IsWinningCell = false;
+                    gameCell.ClickCommand.RaiseCanExecuteChanged();
+                }
+            }
+
             PrintCurrentPlayerTurn();
         }
     }
