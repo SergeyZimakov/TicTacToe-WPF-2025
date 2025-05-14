@@ -6,5 +6,6 @@ namespace TicTacToe.Classes
     {
         public required string Name { get; set; }
         public SymbolTypeEnum Symbol { get; set; }
+        public bool IsComputer { get; set; }
     }
 }
