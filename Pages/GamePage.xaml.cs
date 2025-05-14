@@ -23,8 +23,10 @@ namespace TicTacToe.Pages
             [1,4,7],[2,5,8],[3,6,9],
             [1,5,9],[3,5,7],
         ];
-        public GamePage()
+        private readonly Frame _frame;
+        public GamePage(Frame frame)
         {
+            _frame = frame;
             InitializeComponent();
             foreach (var idx in Enumerable.Range(1, 9))
             {
