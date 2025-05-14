@@ -104,5 +104,17 @@ namespace TicTacToe.Pages
         {
             CurrPlayerIdx = CurrPlayerIdx == 0 ? 1 : 0;
         }
+
+        private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (NavigationService?.CanGoBack == true) NavigationService.GoBack();
+        }
+
+        private void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            foreach (var gameCell in GameCells) gameCell.Symbol = null;
+            CurrPlayerIdx = 0;
+            PrintCurrentPlayerTurn();
+        }
     }
 }

@@ -47,15 +47,19 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" 
-     x:Name="GameMessageTxt" 
-     IsReadOnly="True" 
-     Text=""
-     FontSize="16"
-     Width="200" 
-     Height="100"
-     Margin="0,10,0,0"
-     TextAlignment="Center" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Back" Width="100" Height="40" Click="BackButton_Click" />
+            <TextBox x:Name="GameMessageTxt" 
+                 IsReadOnly="True" 
+                 Text=""
+                 FontSize="16"
+                 Width="200" 
+                 Height="40"
+                 TextAlignment="Center"
+                 VerticalContentAlignment="Center" />
+            <Button Content="New Game" Width="100" Height="40" Click="NewGameButton_Click" />
+        </StackPanel>
+
         <ItemsControl Grid.Row="1" ItemsSource="{Binding GameCells}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
