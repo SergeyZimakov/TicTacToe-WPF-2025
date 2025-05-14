@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using TicTacToe.Classes;
+using TicTacToe.Dto;
 using TicTacToe.Enums;
 using TicTacToe.Helpers;
 
@@ -45,16 +46,20 @@ namespace TicTacToe.Pages
         {
             gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
 
-            var (symbol, winLine) = GetWinner();
-            if (symbol.HasValue)
+            var gameStatusDto = GetGameStatusDto();
+            if (gameStatusDto.IsGameFinished)
             {
                 IsGameActive = false;
                 foreach (var item in GameCells)
                 {
                     item.ClickCommand.RaiseCanExecuteChanged();
-                    item.IsWinningCell = winLine.Contains(item.Number);
+                    item.IsWinningCell = gameStatusDto.WinLine.Contains(item.Number);
                 }
-                GameMessageTxt.Text = $"{Players[CurrPlayerIdx].Name} Win";
+
+                GameMessageTxt.Text = gameStatusDto.Winner != null
+                    ? $"{gameStatusDto.Winner.Name} Win"
+                    : $"Draw";
+
                 return;
             }
 
@@ -62,18 +67,31 @@ namespace TicTacToe.Pages
             PrintCurrentPlayerTurn();
         }
 
-        private (SymbolTypeEnum? symbol, List<int> line) GetWinner()
+        private GameStatusDto GetGameStatusDto()
         {
-            var xList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.X).Select(c => c.Number).ToHashSet();
-            var oList = GameCells.Where(c => c.Symbol == SymbolTypeEnum.O).Select(c => c.Number).ToHashSet();
+            var resDto = new GameStatusDto();
 
             foreach (var winLine in _winLines)
             {
-                if (winLine.All(xList.Contains)) return (SymbolTypeEnum.X, winLine);
-                if (winLine.All(oList.Contains)) return (SymbolTypeEnum.O, winLine);
+                var symbols = GameCells.Where(cell => winLine.Contains(cell.Number)).Select(cell => cell.Symbol);
+                if (symbols.Any(symbol => !symbol.HasValue)) continue;
+
+                if (symbols.GroupBy(symbol => symbol).Count() == 1)
+                {
+                    resDto.IsGameFinished = true;
+                    resDto.Winner = Players.Find(player => player.Symbol == symbols.First());
+                    resDto.WinLine = winLine;
+                    return resDto;
+                }
             }
 
-            return (null, []);
+            if (GameCells.All(cell => cell.Symbol.HasValue))
+            {
+                resDto.IsGameFinished = true;
+                return resDto;
+            }
+
+            return resDto;
         }
 
         private void PrintCurrentPlayerTurn()
