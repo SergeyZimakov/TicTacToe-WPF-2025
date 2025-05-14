@@ -8,7 +8,21 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="StartPage">
 
-    <Grid>
-        
-    </Grid>
+    <StackPanel VerticalAlignment="Center">
+        <TextBlock Text="Select Game Mode:" FontSize="16" />
+        <ComboBox x:Name="GameModeBox" Text="Please choose game mode" SelectionChanged="GameModeBox_SelectionChanged">
+            <ComboBoxItem Content="1 x 1" Tag="PvP" />
+            <ComboBoxItem Content="Against Computer" Tag="PvC" />
+        </ComboBox>
+
+        <TextBlock Text="Player 1:" />
+        <TextBox x:Name="Player1NameTxt" IsEnabled="False" />
+
+        <TextBlock Text="Player 2:" />
+        <TextBox x:Name="Player2NameTxt" IsEnabled="False" />
+
+        <TextBlock x:Name="ErrorMessageTxt" Foreground="Red" />
+
+        <Button Content="Start Game" Click="StartGame_Click"></Button>
+    </StackPanel>
 </Page>
