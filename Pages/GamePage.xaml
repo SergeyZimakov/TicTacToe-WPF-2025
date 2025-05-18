@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TicTacToe.Pages"
+      xmlns:enums="clr-namespace:TicTacToe.Enums"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       xmlns:converters="clr-namespace:TicTacToe.Converters" xmlns:classes="clr-namespace:TicTacToe.Classes" d:DataContext="{d:DesignInstance Type=classes:GameCell}"
@@ -73,9 +74,37 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Content="{Binding Symbol, Converter={StaticResource SymbolConverter}}" 
-                    Command="{Binding ClickCommand}"
-                    Style="{StaticResource GameCellButtonStyle}" />
+                    <Button Command="{Binding ClickCommand}" Style="{StaticResource GameCellButtonStyle}">
+                        <ContentControl>
+                            <ContentControl.Style>
+                                <Style TargetType="ContentControl">
+                                    <Setter Property="Content" Value="{Binding Symbol, Converter={StaticResource SymbolConverter}}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Symbol}" Value="{x:Static enums:SymbolTypeEnum.X}">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         From="0" To="1" Duration="0:0:0.5" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Symbol}" Value="{x:Static enums:SymbolTypeEnum.O}">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         From="0" To="1" Duration="0:0:0.5" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl> 
+                    </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

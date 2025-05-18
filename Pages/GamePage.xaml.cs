@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using TicTacToe.Classes;
 using TicTacToe.Dto;
@@ -28,12 +29,18 @@ namespace TicTacToe.Pages
 
             Players.Add(player1);
             Players.Add(player2);
-            StartNewGame();
+            Loaded += GamePage_Loaded;
 
             DataContext = this;
         }
 
-        public void OnGameCellClicked(GameCell gameCell)
+        private async void GamePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= GamePage_Loaded;
+            await StartNewGame();
+        }
+
+        public async Task OnGameCellClicked(GameCell gameCell)
         {
             gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
 
@@ -56,6 +63,12 @@ namespace TicTacToe.Pages
 
             SwitchPlayer();
             PrintCurrentPlayerTurn();
+            await PerformComputerActionIfNeeded();
+        }
+
+        private async Task HandleOnGameCellCliked()
+        {
+
         }
 
         private GameStatusDto GetGameStatusDto()
@@ -101,12 +114,12 @@ namespace TicTacToe.Pages
             if (NavigationService?.CanGoBack == true) NavigationService.GoBack();
         }
 
-        private void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            StartNewGame();
+            await StartNewGame();
         }
 
-        private void StartNewGame()
+        private async Task StartNewGame()
         {
             IsGameActive = true;
             CurrPlayerIdx = 0;
@@ -117,7 +130,7 @@ namespace TicTacToe.Pages
                 {
                     var gameCell = new GameCell { Number = idx, Symbol = null };
                     gameCell.ClickCommand = new RelayCommand(
-                        () => OnGameCellClicked(gameCell),
+                        async () => await OnGameCellClicked(gameCell),
                         () => IsGameActive && !gameCell.Symbol.HasValue
                     );
                     GameCells.Add(gameCell);
@@ -134,6 +147,19 @@ namespace TicTacToe.Pages
             }
 
             PrintCurrentPlayerTurn();
+            await PerformComputerActionIfNeeded();
+        }
+
+        private async Task PerformComputerActionIfNeeded()
+        {
+            
+            if (Players[CurrPlayerIdx].IsComputer)
+            {
+                await Task.Delay(700);
+                var cellNum = ComputerPlayerHelper.GetMove([.. GameCells], _winLines, Players[CurrPlayerIdx].Symbol);
+                if (!cellNum.HasValue) return;
+                await OnGameCellClicked(GameCells.First(cell => cell.Number == cellNum.Value));
+            }
         }
     }
 }

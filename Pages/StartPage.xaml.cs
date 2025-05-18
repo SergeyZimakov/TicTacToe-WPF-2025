@@ -94,14 +94,14 @@ namespace TicTacToe.Pages
             {
                 Name = Player1NameTxt.Text,
                 Symbol = Enums.SymbolTypeEnum.X,
-                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption == "1"
+                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption != "1"
             };
 
             var player2 = new Player
             {
                 Name = Player2NameTxt.Text,
                 Symbol = Enums.SymbolTypeEnum.O,
-                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption == "2"
+                IsComputer = _selectedGameModeOption == "PvC" && _selectedPlayAsOption != "2"
             };
             _frame.Navigate(new GamePage(_frame, player1, player2));
         }
