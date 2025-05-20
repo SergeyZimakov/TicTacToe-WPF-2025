@@ -66,11 +66,6 @@ namespace TicTacToe.Pages
             await PerformComputerActionIfNeeded();
         }
 
-        private async Task HandleOnGameCellCliked()
-        {
-
-        }
-
         private GameStatusDto GetGameStatusDto()
         {
             var resDto = new GameStatusDto();
