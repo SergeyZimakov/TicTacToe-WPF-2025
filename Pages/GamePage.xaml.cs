@@ -62,6 +62,8 @@ namespace TicTacToe.Pages
                     ? $"Draw"
                     : $"{CurrentPlayer.Name} Win";
 
+                PrintScore();
+
                 return;
             }
 
@@ -98,6 +100,8 @@ namespace TicTacToe.Pages
         }
 
         private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn ({CurrentPlayer.Symbol.GetAsString()})";
+
+        private void PrintScore() => ScoreMessageTxt.Text = $"{Player1.WinsCount} : {Player2.WinsCount}";
         
 
         private void SwitchPlayer() => CurrentPlayer = CurrentPlayer != Player1 ? Player1 : Player2;
@@ -141,6 +145,7 @@ namespace TicTacToe.Pages
             }
 
             PrintCurrentPlayerTurn();
+            PrintScore();
             await PerformComputerActionIfNeeded();
         }
 
