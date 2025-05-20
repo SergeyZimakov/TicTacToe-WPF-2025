@@ -56,6 +56,8 @@ namespace TicTacToe.Pages
                     item.IsWinningCell = gameStatusDto.WinLine.Contains(item.Number);
                 }
 
+                if (!gameStatusDto.IsDraw) CurrentPlayer.WinsCount++;
+
                 GameMessageTxt.Text = gameStatusDto.IsDraw
                     ? $"Draw"
                     : $"{CurrentPlayer.Name} Win";
@@ -95,7 +97,7 @@ namespace TicTacToe.Pages
             return resDto;
         }
 
-        private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn({CurrentPlayer.Symbol.GetAsString()})";
+        private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn ({CurrentPlayer.Symbol.GetAsString()})";
         
 
         private void SwitchPlayer() => CurrentPlayer = CurrentPlayer != Player1 ? Player1 : Player2;
