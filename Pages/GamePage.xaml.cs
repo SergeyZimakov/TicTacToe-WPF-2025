@@ -99,9 +99,9 @@ namespace TicTacToe.Pages
             return resDto;
         }
 
-        private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn ({CurrentPlayer.Symbol.GetAsString()})";
+        private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn";
 
-        private void PrintScore() => ScoreMessageTxt.Text = $"{Player1.WinsCount} : {Player2.WinsCount}";
+        private void PrintScore() => ScoreMessageTxt.Text = $"({Player1.Symbol.GetAsString()}) {Player1.Name} {Player1.WinsCount} : {Player2.WinsCount} {Player2.Name} ({Player2.Symbol.GetAsString()})";
         
 
         private void SwitchPlayer() => CurrentPlayer = CurrentPlayer != Player1 ? Player1 : Player2;
