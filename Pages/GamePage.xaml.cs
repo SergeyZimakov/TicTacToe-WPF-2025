@@ -56,9 +56,9 @@ namespace TicTacToe.Pages
                     item.IsWinningCell = gameStatusDto.WinLine.Contains(item.Number);
                 }
 
-                if (!gameStatusDto.IsDraw) CurrentPlayer.WinsCount++;
+                if (gameStatusDto.Winner != null) CurrentPlayer.WinsCount++;
 
-                GameMessageTxt.Text = gameStatusDto.IsDraw
+                GameMessageTxt.Text = gameStatusDto.Winner == null
                     ? $"Draw"
                     : $"{CurrentPlayer.Name} Win";
 
@@ -84,6 +84,7 @@ namespace TicTacToe.Pages
                 if (symbols.GroupBy(symbol => symbol).Count() == 1)
                 {
                     resDto.IsGameFinished = true;
+                    resDto.Winner = CurrentPlayer;
                     resDto.WinLine = winLine;
                     return resDto;
                 }
@@ -92,7 +93,6 @@ namespace TicTacToe.Pages
             if (GameCells.All(cell => cell.Symbol.HasValue))
             {
                 resDto.IsGameFinished = true;
-                resDto.IsDraw = true;
                 return resDto;
             }
 
@@ -102,25 +102,41 @@ namespace TicTacToe.Pages
         private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn";
 
         private void PrintScore() => ScoreMessageTxt.Text = $"({Player1.Symbol.GetAsString()}) {Player1.Name} {Player1.WinsCount} : {Player2.WinsCount} {Player2.Name} ({Player2.Symbol.GetAsString()})";
-        
 
-        private void SwitchPlayer() => CurrentPlayer = CurrentPlayer != Player1 ? Player1 : Player2;
-        
+        private void SwitchPlayer() => CurrentPlayer = GetOppositePlayer(CurrentPlayer);
+
+        private Player GetOppositePlayer(Player player) => player != Player1 ? Player1 : Player2;
 
         private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (NavigationService?.CanGoBack == true) NavigationService.GoBack();
         }
 
-        private async void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private Player GetFirstMovePlayer()
         {
-            await StartNewGame();
+            if (!GameCells.Where(cell => !cell.Symbol.HasValue).Any()) return CurrentPlayer;
+            var player1MovesCount = GameCells.Where(cell => cell.Symbol == Player1.Symbol).Count();
+            var player2MovesCount = GameCells.Where(cell => cell.Symbol == Player2.Symbol).Count();
+            return player1MovesCount > player2MovesCount ? Player1 : Player2;
         }
 
-        private async Task StartNewGame()
+        private async void NewGameButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var lastGameStatusDto = GetGameStatusDto();
+            var firstMoveLastGamePlayer = GetFirstMovePlayer();
+            var newGameFirstMovePlayer = !lastGameStatusDto.IsGameFinished || lastGameStatusDto.Winner == null
+                ? GetOppositePlayer(firstMoveLastGamePlayer)
+                : lastGameStatusDto.Winner;
+            
+            await StartNewGame(newGameFirstMovePlayer);
+        }
+
+        private async Task StartNewGame() => await StartNewGame(Player1);
+
+        private async Task StartNewGame(Player firstMovePlayer)
         {
             IsGameActive = true;
-            CurrentPlayer = Player1;
+            CurrentPlayer = firstMovePlayer;
 
             if (!GameCells.Any())
             {
