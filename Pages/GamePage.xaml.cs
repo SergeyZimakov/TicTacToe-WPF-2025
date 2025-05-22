@@ -12,8 +12,9 @@ namespace TicTacToe.Pages
     public partial class GamePage : Page
     {
         public ObservableCollection<GameCell> GameCells { get; set; } = [];
-        public List<Player> Players { get; set; } = [];
-        private int CurrPlayerIdx { get; set; } = 0;
+        public Player Player1 { get; set; }
+        public Player Player2 { get; set; }
+        public Player CurrentPlayer { get; set; }
         private bool IsGameActive { get; set; } = true;
         private readonly List<List<int>> _winLines =
         [
@@ -27,8 +28,9 @@ namespace TicTacToe.Pages
             InitializeComponent();
             _frame = frame;
 
-            Players.Add(player1);
-            Players.Add(player2);
+            Player1 = player1;
+            Player2 = player2;
+            CurrentPlayer = Player1;
             Loaded += GamePage_Loaded;
 
             DataContext = this;
@@ -42,7 +44,7 @@ namespace TicTacToe.Pages
 
         public async Task OnGameCellClicked(GameCell gameCell)
         {
-            gameCell.Symbol = Players[CurrPlayerIdx].Symbol;
+            gameCell.Symbol = CurrentPlayer.Symbol;
 
             var gameStatusDto = GetGameStatusDto();
             if (gameStatusDto.IsGameFinished)
@@ -54,9 +56,13 @@ namespace TicTacToe.Pages
                     item.IsWinningCell = gameStatusDto.WinLine.Contains(item.Number);
                 }
 
-                GameMessageTxt.Text = gameStatusDto.Winner != null
-                    ? $"{gameStatusDto.Winner.Name} Win"
-                    : $"Draw";
+                if (!gameStatusDto.IsDraw) CurrentPlayer.WinsCount++;
+
+                GameMessageTxt.Text = gameStatusDto.IsDraw
+                    ? $"Draw"
+                    : $"{CurrentPlayer.Name} Win";
+
+                PrintScore();
 
                 return;
             }
@@ -78,7 +84,6 @@ namespace TicTacToe.Pages
                 if (symbols.GroupBy(symbol => symbol).Count() == 1)
                 {
                     resDto.IsGameFinished = true;
-                    resDto.Winner = Players.Find(player => player.Symbol == symbols.First());
                     resDto.WinLine = winLine;
                     return resDto;
                 }
@@ -87,22 +92,20 @@ namespace TicTacToe.Pages
             if (GameCells.All(cell => cell.Symbol.HasValue))
             {
                 resDto.IsGameFinished = true;
+                resDto.IsDraw = true;
                 return resDto;
             }
 
             return resDto;
         }
 
-        private void PrintCurrentPlayerTurn()
-        {
-            var currPlayer = Players[CurrPlayerIdx];
-            GameMessageTxt.Text = $"{currPlayer.Name} turn({currPlayer.Symbol.GetAsString()})";
-        }
+        private void PrintCurrentPlayerTurn() => GameMessageTxt.Text = $"{CurrentPlayer.Name} turn";
 
-        private void SwitchPlayer()
-        {
-            CurrPlayerIdx = CurrPlayerIdx == 0 ? 1 : 0;
-        }
+        private void PrintScore() => ScoreMessageTxt.Text = $"({Player1.Symbol.GetAsString()}) {Player1.Name} {Player1.WinsCount} : {Player2.WinsCount} {Player2.Name} ({Player2.Symbol.GetAsString()})";
+        
+
+        private void SwitchPlayer() => CurrentPlayer = CurrentPlayer != Player1 ? Player1 : Player2;
+        
 
         private void BackButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -117,7 +120,7 @@ namespace TicTacToe.Pages
         private async Task StartNewGame()
         {
             IsGameActive = true;
-            CurrPlayerIdx = 0;
+            CurrentPlayer = Player1;
 
             if (!GameCells.Any())
             {
@@ -142,16 +145,17 @@ namespace TicTacToe.Pages
             }
 
             PrintCurrentPlayerTurn();
+            PrintScore();
             await PerformComputerActionIfNeeded();
         }
 
         private async Task PerformComputerActionIfNeeded()
         {
             
-            if (Players[CurrPlayerIdx].IsComputer)
+            if (CurrentPlayer.IsComputer)
             {
                 await Task.Delay(700);
-                var cellNum = ComputerPlayerHelper.GetMove([.. GameCells], _winLines, Players[CurrPlayerIdx].Symbol);
+                var cellNum = ComputerPlayerHelper.GetMove([.. GameCells], _winLines, CurrentPlayer.Symbol);
                 if (!cellNum.HasValue) return;
                 await OnGameCellClicked(GameCells.First(cell => cell.Number == cellNum.Value));
             }
